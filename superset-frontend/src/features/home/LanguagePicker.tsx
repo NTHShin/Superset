@@ -48,8 +48,34 @@ const StyledLabel = styled.div`
     width: 150px;
     word-wrap: break-word;
     text-decoration: none;
+    cursor: pointer;
   }
 `;
+
+// THAY ĐỔI: Hàm xử lý chuyển đổi ngôn ngữ mà không redirect về welcome
+const handleLanguageChange = (url: string) => {
+  // Lấy URL hiện tại
+  const currentPath = window.location.pathname;
+
+  // Parse URL từ backend để lấy query params locale
+  const urlObj = new URL(url, window.location.origin);
+  const newLocale = urlObj.searchParams.get('locale');
+
+  if (!newLocale) {
+    window.location.href = url;
+    return;
+  }
+
+  // Nếu đang ở trang welcome, chuyển về dashboard
+  if (currentPath.includes('/welcome') || currentPath === '/' || currentPath === '/superset/welcome/') {
+    window.location.href = `/dashboard/list/?locale=${newLocale}`;
+  } else {
+    // Giữ nguyên trang hiện tại, chỉ thay đổi locale
+    const currentUrl = new URL(window.location.href);
+    currentUrl.searchParams.set('locale', newLocale);
+    window.location.href = currentUrl.toString();
+  }
+};
 
 export const useLanguageMenuItems = ({
   locale,
@@ -61,7 +87,13 @@ export const useLanguageMenuItems = ({
       label: (
         <StyledLabel className="f16">
           <i className={`flag ${languages[langKey].flag}`} />
-          <Typography.Link href={languages[langKey].url}>
+          {/* THAY ĐỔI: Sử dụng onClick thay vì href để kiểm soát redirect */}
+          <Typography.Link
+            onClick={(e: React.MouseEvent) => {
+              e.preventDefault();
+              handleLanguageChange(languages[langKey].url);
+            }}
+          >
             {languages[langKey].name}
           </Typography.Link>
         </StyledLabel>

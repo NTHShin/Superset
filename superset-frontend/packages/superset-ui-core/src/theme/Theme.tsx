@@ -64,10 +64,10 @@ export class Theme {
   private static readonly defaultTokens = {
     // Brand
     brandLogoAlt: 'Apache Superset',
-    brandLogoUrl: '/static/assets/images/superset-logo-horiz.png',
-    brandLogoMargin: '18px',
+    brandLogoUrl: '/static/assets/images/logopac.png',
+    brandLogoMargin: '',
     brandLogoHref: '/',
-    brandLogoHeight: '24px',
+    brandLogoHeight: '40px',
 
     // Default colors
     colorPrimary: '#2893B3', // NOTE: previous lighter primary color was #20a7c9
@@ -76,6 +76,7 @@ export class Theme {
     colorWarning: '#fcc700',
     colorSuccess: '#5ac189',
     colorInfo: '#66bcfe',
+    colorBasic: '#44C4B8',
 
     // Forcing some default tokens
     fontFamily: `'Inter', Helvetica, Arial`,

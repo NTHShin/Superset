@@ -26,9 +26,9 @@ import sys
 
 from celery.schedules import crontab
 from flask_caching.backends.filesystemcache import FileSystemCache
-
+# from flask_appbuilder.security.manager import AUTH_OAUTH
 logger = logging.getLogger()
-
+# AUTH_TYPE = AUTH_OAUTH
 DATABASE_DIALECT = os.getenv("DATABASE_DIALECT")
 DATABASE_USER = os.getenv("DATABASE_USER")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
@@ -41,7 +41,69 @@ EXAMPLES_PASSWORD = os.getenv("EXAMPLES_PASSWORD")
 EXAMPLES_HOST = os.getenv("EXAMPLES_HOST")
 EXAMPLES_PORT = os.getenv("EXAMPLES_PORT")
 EXAMPLES_DB = os.getenv("EXAMPLES_DB")
+ENABLE_UI_THEME_ADMINISTRATION = True
+BABEL_DEFAULT_LOCALE = 'vi'
+# OAUTH_PROVIDERS = [
+#     {
+#         "name": "azure",               # tên này sẽ xuất hiện trong bootstrap -> UI sẽ show button
+#         "icon": "fa-windows",          # optional
+#         "token_key": "access_token",
+#         "remote_app": {
+#             # Nếu chỉ muốn hiển thị button, bạn có thể dùng dummy ID/secret:
+#             "client_id": os.environ.get("AZURE_CLIENT_ID", "DUMMY_CLIENT_ID"),
+#             "client_secret": os.environ.get("AZURE_CLIENT_SECRET", "DUMMY_SECRET"),
+#             "api_base_url": "https://login.microsoftonline.com/common/v2.0",
+#             "access_token_url": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+#             "authorize_url": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+#             "client_kwargs": {"scope": "openid profile email"},
+#         },
+#     }
+# ]
+LOGO_TARGET_PATH = '/dashboard/list/'
+LANDING_PAGE = '/dashboard/list/'
+DASHBOARD_RBAC = True
 
+LANGUAGES = {
+    'en': {'flag': 'us', 'name': 'English'},
+    'vi': {'flag': 'vn', 'name': 'Tiếng Việt'},
+}
+
+
+THEME_DEFAULT = {
+    "token": {
+        "colorBgBase": "#FEFFFF",
+        # ... your theme JSON configuration
+    },
+    "component": {
+        "Button": {
+            "colorPrimaryBg": "#e67716",
+        },
+    },
+}
+
+# Optional: Dark theme configuration
+THEME_DARK = {
+    "algorithm": "dark",
+    "token": {
+        "colorBgBase": "#343232"
+        # ... your dark theme overrides
+    }
+}
+THEME_ORANGE = {
+    "name": "Orange Theme",  
+    "key": "theme_orange",   
+    "algorithm": "orange",
+
+    "token": {
+        "colorBgBase": "#FFC779", 
+        
+    },
+    "component": {
+        "Button": {
+            "colorPrimaryBg": "#e67716", 
+        },
+    },
+}
 # The SQLAlchemy connection string.
 SQLALCHEMY_DATABASE_URI = (
     f"{DATABASE_DIALECT}://"
@@ -99,7 +161,7 @@ class CeleryConfig:
 
 CELERY_CONFIG = CeleryConfig
 
-FEATURE_FLAGS = {"ALERT_REPORTS": True}
+FEATURE_FLAGS = {"ALERT_REPORTS": True, "TAGGING_SYSTEM": True}
 ALERT_REPORTS_NOTIFICATION_DRY_RUN = True
 WEBDRIVER_BASEURL = f"http://superset_app{os.environ.get('SUPERSET_APP_ROOT', '/')}/"  # When using docker compose baseurl should be http://superset_nginx{ENV{BASEPATH}}/  # noqa: E501
 # The base URL for the email report hyperlinks.

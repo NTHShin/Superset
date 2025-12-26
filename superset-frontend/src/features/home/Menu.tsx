@@ -284,10 +284,13 @@ export function Menu({
   };
   const renderBrand = () => {
     let link;
+    // THAY ĐỔI: Logo luôn trỏ về /dashboard/list/
+    const dashboardListPath = '/dashboard/list/';
+
     if (theme.brandLogoUrl) {
       link = (
         <StyledBrandWrapper margin={theme.brandLogoMargin}>
-          <StyledBrandLink href={theme.brandLogoHref}>
+          <StyledBrandLink href={dashboardListPath}>
             <StyledImage
               preview={false}
               src={theme.brandLogoUrl}
@@ -302,7 +305,7 @@ export function Menu({
       // TODO: deprecate this once Theme is fully rolled out
       // Kept as is for backwards compatibility with the old theme system / superset_config.py
       link = (
-        <GenericLink className="navbar-brand" to={brand.path}>
+        <GenericLink className="navbar-brand" to={dashboardListPath}>
           <StyledImage preview={false} src={brand.icon} alt={brand.alt} />
         </GenericLink>
       );
@@ -310,7 +313,7 @@ export function Menu({
       link = (
         <Typography.Link
           className="navbar-brand"
-          href={brand.path}
+          href={dashboardListPath}
           tabIndex={-1}
         >
           <StyledImage preview={false} src={brand.icon} alt={brand.alt} />

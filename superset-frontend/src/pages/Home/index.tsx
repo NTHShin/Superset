@@ -74,7 +74,8 @@ interface LoadingProps {
   cover?: boolean;
 }
 
-const DEFAULT_TAB_ARR = ['dashboards', 'charts'];
+// THAY ĐỔI: Chỉ hiển thị Dashboards mặc định
+const DEFAULT_TAB_ARR = ['dashboards'];
 
 const WelcomeContainer = styled.div`
   background: ${({ theme }) => theme.colorBgLayout};
@@ -147,9 +148,22 @@ export const LoadingCards = ({ cover }: LoadingProps) => (
 );
 
 function Welcome({ user, addDangerToast }: WelcomeProps) {
+  // QUAN TRỌNG: Luôn redirect về dashboard/list - KHÔNG BAO GIỜ hiển thị trang Welcome
+  useEffect(() => {
+    // Check nếu có return path từ language change
+    const returnPath = sessionStorage.getItem('returnAfterLanguageChange');
+    if (returnPath && returnPath !== '/' && !returnPath.includes('/welcome')) {
+      sessionStorage.removeItem('returnAfterLanguageChange');
+      window.location.replace(returnPath);
+    } else {
+      // Mặc định: Luôn redirect về dashboard/list
+      window.location.replace('/dashboard/list/');
+    }
+  }, []);
+
   const canReadSavedQueries = userHasPermission(user, 'SavedQuery', 'can_read');
   const userid = user.userId;
-  const id = userid!.toString(); // confident that user is not a guest user
+  const id = userid!.toString();
   const params = rison.encode({ page_size: 24, distinct: false });
   const recent = `/api/v1/log/recent_activity/?q=${params}`;
   const [activeChild, setActiveChild] = useState('Loading');
@@ -242,7 +256,6 @@ function Welcome({ user, addDangerToast }: WelcomeProps) {
         }),
       );
 
-    // Sets other activity data in parallel with recents api call
     const ownSavedQueryFilters = [
       {
         col: 'created_by',
@@ -275,17 +288,17 @@ function Welcome({ user, addDangerToast }: WelcomeProps) {
         }),
       canReadSavedQueries
         ? getUserOwnedObjects(id, 'saved_query', ownSavedQueryFilters)
-            .then(r => {
-              setQueryData(r);
-              return Promise.resolve();
-            })
-            .catch((err: unknown) => {
-              setQueryData([]);
-              addDangerToast(
-                t('There was an issue fetching your saved queries: %s', err),
-              );
-              return Promise.resolve();
-            })
+          .then(r => {
+            setQueryData(r);
+            return Promise.resolve();
+          })
+          .catch((err: unknown) => {
+            setQueryData([]);
+            addDangerToast(
+              t('There was an issue fetching your saved queries: %s', err),
+            );
+            return Promise.resolve();
+          })
         : Promise.resolve(),
     ]).then(() => {
       setIsFetchingActivityData(false);
@@ -360,26 +373,12 @@ function Welcome({ user, addDangerToast }: WelcomeProps) {
               onChange={handleCollapse}
               ghost
               items={[
-                {
-                  key: 'recents',
-                  label: t('Recents'),
-                  children:
-                    activityData &&
-                    (activityData[TableTab.Viewed] ||
-                      activityData[TableTab.Other] ||
-                      activityData[TableTab.Created]) &&
-                    activeChild !== 'Loading' ? (
-                      <ActivityTable
-                        user={{ userId: user.userId! }} // user is definitely not a guest user on this page
-                        activeChild={activeChild}
-                        setActiveChild={setActiveChild}
-                        activityData={activityData}
-                        isFetchingActivityData={isFetchingActivityData}
-                      />
-                    ) : (
-                      <LoadingCards />
-                    ),
-                },
+                // THAY ĐỔI: Ẩn phần Recents
+                // {
+                //   key: 'recents',
+                //   label: t('Recents'),
+                //   children: ...
+                // },
                 {
                   key: 'dashboards',
                   label: t('Dashboards'),
@@ -391,47 +390,20 @@ function Welcome({ user, addDangerToast }: WelcomeProps) {
                         user={user}
                         mine={dashboardData}
                         showThumbnails={checked}
-                        otherTabData={activityData?.[TableTab.Other]}
-                        otherTabFilters={otherTabFilters}
-                        otherTabTitle={otherTabTitle}
+                        otherTabData={[]}
+                        otherTabFilters={[]}
+                        otherTabTitle=""
                       />
                     ),
                 },
-                {
-                  key: 'charts',
-                  label: t('Charts'),
-                  children:
-                    !chartData || isRecentActivityLoading ? (
-                      <LoadingCards cover={checked} />
-                    ) : (
-                      <ChartTable
-                        showThumbnails={checked}
-                        user={user}
-                        mine={chartData}
-                        otherTabData={activityData?.[TableTab.Other]}
-                        otherTabFilters={otherTabFilters}
-                        otherTabTitle={otherTabTitle}
-                      />
-                    ),
-                },
-                ...(canReadSavedQueries
-                  ? [
-                      {
-                        key: 'saved-queries',
-                        label: t('Saved queries'),
-                        children: !queryData ? (
-                          <LoadingCards cover={checked} />
-                        ) : (
-                          <SavedQueries
-                            showThumbnails={checked}
-                            user={user}
-                            mine={queryData}
-                            featureFlag={isThumbnailsEnabled}
-                          />
-                        ),
-                      },
-                    ]
-                  : []),
+                // THAY ĐỔI: Ẩn phần Charts
+                // {
+                //   key: 'charts',
+                //   label: t('Charts'),
+                //   children: ...
+                // },
+                // THAY ĐỔI: Ẩn phần Saved queries
+                // ...(canReadSavedQueries ? [...] : []),
               ]}
             />
           </>

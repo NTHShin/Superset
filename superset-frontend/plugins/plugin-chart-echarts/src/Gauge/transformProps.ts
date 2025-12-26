@@ -188,10 +188,9 @@ export default function transformProps(
         detail: {
           offsetCenter: [
             '0%',
-            `${
-              index * titleOffsetFromTitle +
-              OFFSETS.titleFromCenter +
-              detailOffsetFromTitle
+            `${index * titleOffsetFromTitle +
+            OFFSETS.titleFromCenter +
+            detailOffsetFromTitle
             }%`,
           ],
           fontSize: FONT_SIZE_MULTIPLIERS.detailFontSize * fontSize,
@@ -220,7 +219,7 @@ export default function transformProps(
     },
   );
 
-  const { setDataMask = () => {}, onContextMenu } = hooks;
+  const { setDataMask = () => { }, onContextMenu } = hooks;
 
   const min = minVal ?? calculateMin(transformedData);
   const max = maxVal ?? calculateMax(transformedData);
@@ -239,13 +238,13 @@ export default function transformProps(
     axisLineWidth + splitLineLength + OFFSETS.ticksFromLine;
   const axisLabelDistance =
     FONT_SIZE_MULTIPLIERS.axisLabelDistance *
-      fontSize *
-      FONT_SIZE_MULTIPLIERS.axisLabelLength *
-      axisLabelLength +
+    fontSize *
+    FONT_SIZE_MULTIPLIERS.axisLabelLength *
+    axisLabelLength +
     (showSplitLine ? splitLineLength : 0) +
     (showAxisTick ? axisTickLength : 0) +
     OFFSETS.ticksFromLine -
-    axisLineWidth;
+    axisLineWidth - 15;
   const axisTickDistance =
     axisLineWidth + axisTickLength + OFFSETS.ticksFromLine;
 
@@ -334,9 +333,11 @@ export default function transformProps(
       detail,
       // @ts-ignore
       tooltip,
-      radius:
-        Math.min(width, height) / 2 - axisLabelDistance - axisTickDistance,
-      center: ['50%', '55%'],
+      radius: Math.min(width, height) / 2 - Math.max(
+        (axisLabelDistance + axisTickDistance) * 0.15,
+        axisLabelLength * fontSize * 0.35
+      ) - 4,
+      center: ['50%', '53.5%'],
       data: transformedData,
     },
   ];

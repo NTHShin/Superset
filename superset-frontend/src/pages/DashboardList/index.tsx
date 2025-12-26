@@ -7,7 +7,7 @@
  * "License"); you may not use this file except in compliance
  * with the License.  You may obtain a copy of the License at
  *
- *   http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing,
  * software distributed under the License is distributed on an
@@ -27,6 +27,9 @@ import { useSelector } from 'react-redux';
 import { useState, useMemo, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import rison from 'rison';
+// --- THAY ĐỔI: Import Tabs từ thư viện giao diện Ant Design ---
+import { Tabs } from 'antd';
+// ---------------------------------------------------------------
 import {
   createFetchRelated,
   createErrorHandler,
@@ -76,18 +79,21 @@ import { findPermission } from 'src/utils/findPermission';
 import { navigateTo } from 'src/utils/navigationUtils';
 import { WIDER_DROPDOWN_WIDTH } from 'src/components/ListView/utils';
 
-const PAGE_SIZE = 25;
+// --- THAY ĐỔI: Tăng PageSize để tải nhiều dashboard hơn ---
+const PAGE_SIZE = 100;
+// ----------------------------------------------------------------
+
 const PASSWORDS_NEEDED_MESSAGE = t(
   'The passwords for the databases below are needed in order to ' +
-    'import them together with the dashboards. Please note that the ' +
-    '"Secure Extra" and "Certificate" sections of ' +
-    'the database configuration are not present in export files, and ' +
-    'should be added manually after the import if they are needed.',
+  'import them together with the dashboards. Please note that the ' +
+  '"Secure Extra" and "Certificate" sections of ' +
+  'the database configuration are not present in export files, and ' +
+  'should be added manually after the import if they are needed.',
 );
 const CONFIRM_OVERWRITE_MESSAGE = t(
   'You are importing one or more dashboards that already exist. ' +
-    'Overwriting might cause you to lose some of your work. Are you ' +
-    'sure you want to overwrite?',
+  'Overwriting might cause you to lose some of your work. Are you ' +
+  'sure you want to overwrite?',
 );
 
 interface DashboardListProps {
@@ -142,12 +148,56 @@ const DASHBOARD_COLUMNS_TO_FETCH = [
   'changed_on',
 ];
 
+// --- THAY ĐỔI: Cấu hình Tabs ---
+const DASHBOARD_TABS_CONFIG = [
+  {
+    key: 'ALL',
+    label: 'Tất cả',
+    tagName: null,
+  },
+  {
+    key: 'favorite',
+    label: 'Yêu thích',
+    tagName: null,
+  },
+  {
+    key: 'TC',
+    label: 'Tài chính',
+    tagName: 'TC',
+  },
+  {
+    key: 'QLDA',
+    label: 'Quản lý dự án',
+    tagName: 'QLDA',
+  },
+  {
+    key: 'NS',
+    label: 'Nhân sự',
+    tagName: 'NS',
+  },
+  {
+    key: 'KPI',
+    label: 'KPI',
+    tagName: 'KPI',
+  },
+  {
+    key: 'CTC',
+    label: 'Công ty con',
+    tagName: 'CTC',
+  },
+];
+// ------------------------------------------------
+
 function DashboardList(props: DashboardListProps) {
   const { addDangerToast, addSuccessToast, user } = props;
   const { roles } = useSelector<any, UserWithPermissionsAndRoles>(
     state => state.user,
   );
   const canReadTag = findPermission('can_read', 'Tag', roles);
+
+  // --- THAY ĐỔI: State lưu trữ Tab đang được chọn ---
+  const [activeTab, setActiveTab] = useState('ALL');
+  // --------------------------------------------------
 
   const {
     state: {
@@ -220,7 +270,8 @@ function DashboardList(props: DashboardListProps) {
   const canDelete = hasPerm('can_write');
   const canExport = hasPerm('can_export');
 
-  const initialSort = [{ id: 'changed_on_delta_humanized', desc: true }];
+  // const initialSort = [{ id: 'changed_on_delta_humanized', desc: true }];
+  const initialSort = [{ id: 'dashboard_title', desc: false }];
 
   function openDashboardEditModal(dashboard: Dashboard) {
     setDashboardToEdit(dashboard);
@@ -519,118 +570,9 @@ function DashboardList(props: DashboardListProps) {
     ],
   );
 
-  const favoritesFilter: ListViewFilter = useMemo(
-    () => ({
-      Header: t('Favorite'),
-      key: 'favorite',
-      id: 'id',
-      urlDisplay: 'favorite',
-      input: 'select',
-      operator: FilterOperator.DashboardIsFav,
-      unfilteredLabel: t('Any'),
-      selects: [
-        { label: t('Yes'), value: true },
-        { label: t('No'), value: false },
-      ],
-    }),
-    [],
-  );
-
   const filters: ListViewFilters = useMemo(() => {
-    const filters_list = [
-      {
-        Header: t('Name'),
-        key: 'search',
-        id: 'dashboard_title',
-        input: 'search',
-        operator: FilterOperator.TitleOrSlug,
-      },
-      {
-        Header: t('Status'),
-        key: 'published',
-        id: 'published',
-        input: 'select',
-        operator: FilterOperator.Equals,
-        unfilteredLabel: t('Any'),
-        selects: [
-          { label: t('Published'), value: true },
-          { label: t('Draft'), value: false },
-        ],
-      },
-      ...(isFeatureEnabled(FeatureFlag.TaggingSystem) && canReadTag
-        ? [
-            {
-              Header: t('Tag'),
-              key: 'tags',
-              id: 'tags',
-              input: 'select',
-              operator: FilterOperator.DashboardTagById,
-              unfilteredLabel: t('All'),
-              fetchSelects: loadTags,
-            },
-          ]
-        : []),
-      {
-        Header: t('Owner'),
-        key: 'owner',
-        id: 'owners',
-        input: 'select',
-        operator: FilterOperator.RelationManyMany,
-        unfilteredLabel: t('All'),
-        fetchSelects: createFetchRelated(
-          'dashboard',
-          'owners',
-          createErrorHandler(errMsg =>
-            addDangerToast(
-              t(
-                'An error occurred while fetching dashboard owner values: %s',
-                errMsg,
-              ),
-            ),
-          ),
-          props.user,
-        ),
-        paginate: true,
-        dropdownStyle: { minWidth: WIDER_DROPDOWN_WIDTH },
-      },
-      ...(user?.userId ? [favoritesFilter] : []),
-      {
-        Header: t('Certified'),
-        key: 'certified',
-        id: 'id',
-        urlDisplay: 'certified',
-        input: 'select',
-        operator: FilterOperator.DashboardIsCertified,
-        unfilteredLabel: t('Any'),
-        selects: [
-          { label: t('Yes'), value: true },
-          { label: t('No'), value: false },
-        ],
-      },
-      {
-        Header: t('Modified by'),
-        key: 'changed_by',
-        id: 'changed_by',
-        input: 'select',
-        operator: FilterOperator.RelationOneMany,
-        unfilteredLabel: t('All'),
-        fetchSelects: createFetchRelated(
-          'dashboard',
-          'changed_by',
-          createErrorHandler(errMsg =>
-            t(
-              'An error occurred while fetching dataset datasource values: %s',
-              errMsg,
-            ),
-          ),
-          user,
-        ),
-        paginate: true,
-        dropdownStyle: { minWidth: WIDER_DROPDOWN_WIDTH },
-      },
-    ] as ListViewFilters;
-    return filters_list;
-  }, [addDangerToast, favoritesFilter, props.user]);
+    return [] as ListViewFilters;
+  }, []);
 
   const sortTypes = [
     {
@@ -723,7 +665,7 @@ function DashboardList(props: DashboardListProps) {
   }
   return (
     <>
-      <SubMenu name={t('Dashboards')} buttons={subMenuButtons} />
+      <SubMenu name={t('Trang tổng quan')} buttons={subMenuButtons} />
       <ConfirmStatusChange
         title={t('Please confirm')}
         description={t(
@@ -750,6 +692,35 @@ function DashboardList(props: DashboardListProps) {
               onSelect: handleBulkDashboardExport,
             });
           }
+
+          // --- THAY ĐỔI: Logic lọc Dashboard theo Tab và Yêu thích ---
+          const currentTabConfig = DASHBOARD_TABS_CONFIG.find(
+            t => t.key === activeTab,
+          );
+
+          const filteredDashboards = dashboards.filter(d => {
+            // 1. Tab Tất cả: Lấy hết
+            if (activeTab === 'ALL') return true;
+
+            // 2. Tab Yêu thích: Kiểm tra trong biến state favoriteStatus (user đã tick sao)
+            if (activeTab === 'favorite') {
+              return favoriteStatus[d.id] === true;
+            }
+
+            // 3. Các Tab Tag còn lại: Lọc theo Tag Name
+            if (!currentTabConfig?.tagName) return true;
+
+            if (!d.tags) return false;
+
+            // So sánh không phân biệt hoa thường
+            return d.tags.some(
+              tag =>
+                tag.name?.toUpperCase() ===
+                currentTabConfig.tagName?.toUpperCase(),
+            );
+          });
+          // -----------------------------------------------------
+
           return (
             <>
               {dashboardToEdit && (
@@ -784,37 +755,55 @@ function DashboardList(props: DashboardListProps) {
                   title={t('Please confirm')}
                 />
               )}
-              <ListView<Dashboard>
-                bulkActions={bulkActions}
-                bulkSelectEnabled={bulkSelectEnabled}
-                cardSortSelectOptions={sortTypes}
-                className="dashboard-list-view"
-                columns={columns}
-                count={dashboardCount}
-                data={dashboards}
-                disableBulkSelect={toggleBulkSelect}
-                fetchData={fetchData}
-                refreshData={refreshData}
-                filters={filters}
-                initialSort={initialSort}
-                loading={loading}
-                pageSize={PAGE_SIZE}
-                addSuccessToast={addSuccessToast}
-                addDangerToast={addDangerToast}
-                showThumbnails={
-                  userKey
-                    ? userKey.thumbnails
-                    : isFeatureEnabled(FeatureFlag.Thumbnails)
-                }
-                renderCard={renderCard}
-                defaultViewMode={
-                  isFeatureEnabled(FeatureFlag.ListviewsDefaultCardView)
-                    ? 'card'
-                    : 'table'
-                }
-                enableBulkTag={enableBulkTag}
-                bulkTagResourceName="dashboard"
-              />
+
+              {/* --- Giao diện Tabs bọc ngoài ListView --- */}
+              <div style={{ marginTop: '20px', paddingRight: '20px' }}>
+                <Tabs
+                  activeKey={activeTab}
+                  onChange={setActiveTab}
+                  tabPosition="left"
+                >
+                  {DASHBOARD_TABS_CONFIG.map(tab => (
+                    <Tabs.TabPane tab={tab.label} key={tab.key}>
+                      {/* Hiển thị ListView với dữ liệu đã lọc (filteredDashboards) */}
+                      <div style={{ paddingLeft: '10px', width: '100%' }}>
+                        <ListView<Dashboard>
+                          bulkActions={bulkActions}
+                          bulkSelectEnabled={bulkSelectEnabled}
+                          cardSortSelectOptions={sortTypes}
+                          className="dashboard-list-view"
+                          columns={columns}
+                          // QUAN TRỌNG: Truyền data đã lọc vào đây
+                          count={filteredDashboards.length}
+                          data={filteredDashboards}
+                          // -------------------------------------
+                          disableBulkSelect={toggleBulkSelect}
+                          fetchData={fetchData}
+                          refreshData={refreshData}
+                          filters={filters}
+                          initialSort={initialSort}
+                          loading={loading}
+                          pageSize={PAGE_SIZE}
+                          addSuccessToast={addSuccessToast}
+                          addDangerToast={addDangerToast}
+                          showThumbnails={
+                            userKey
+                              ? userKey.thumbnails
+                              : isFeatureEnabled(FeatureFlag.Thumbnails)
+                          }
+                          renderCard={renderCard}
+                          // --- THAY ĐỔI: Mặc định hiển thị dạng Card (Box) ---
+                          defaultViewMode="card"
+                          // ---------------------------------------------------
+                          enableBulkTag={enableBulkTag}
+                          bulkTagResourceName="dashboard"
+                        />
+                      </div>
+                    </Tabs.TabPane>
+                  ))}
+                </Tabs>
+              </div>
+              {/* ----------------------------------------------------- */}
             </>
           );
         }}

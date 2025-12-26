@@ -35,6 +35,7 @@ export type Locale =
   | 'pt'
   | 'pt_BR'
   | 'ru'
+  | 'vi'      // THÊM: Tiếng Việt
   | 'zh'
   | 'zh_TW'; // supported locales in Superset
 
