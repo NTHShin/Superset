@@ -28,5 +28,4 @@ function Home() {
   }, [history]);
   return <Loading />;
 }
-
 export default Home;
