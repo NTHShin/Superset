@@ -24,12 +24,10 @@ import {
   t,
 } from '@superset-ui/core';
 import { useSelector } from 'react-redux';
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import rison from 'rison';
-// --- THAY ĐỔI: Import Tabs từ thư viện giao diện Ant Design ---
 import { Tabs } from 'antd';
-// ---------------------------------------------------------------
 import {
   createFetchRelated,
   createErrorHandler,
@@ -79,9 +77,9 @@ import { findPermission } from 'src/utils/findPermission';
 import { navigateTo } from 'src/utils/navigationUtils';
 import { WIDER_DROPDOWN_WIDTH } from 'src/components/ListView/utils';
 
-// --- THAY ĐỔI: Tăng PageSize để tải nhiều dashboard hơn ---
-const PAGE_SIZE = 100;
-// ----------------------------------------------------------------
+// --- CẤU HÌNH: Tăng PageSize để tải nhiều dashboard hơn phục vụ việc lọc Tab ---
+const PAGE_SIZE = 500;
+// -------------------------------------------------------------------------------
 
 const PASSWORDS_NEEDED_MESSAGE = t(
   'The passwords for the databases below are needed in order to ' +
@@ -148,7 +146,7 @@ const DASHBOARD_COLUMNS_TO_FETCH = [
   'changed_on',
 ];
 
-// --- THAY ĐỔI: Cấu hình Tabs ---
+// --- CẤU HÌNH DANH SÁCH TABS ---
 const DASHBOARD_TABS_CONFIG = [
   {
     key: 'ALL',
@@ -186,7 +184,7 @@ const DASHBOARD_TABS_CONFIG = [
     tagName: 'CTC',
   },
 ];
-// ------------------------------------------------
+// --------------------------------
 
 function DashboardList(props: DashboardListProps) {
   const { addDangerToast, addSuccessToast, user } = props;
@@ -195,9 +193,12 @@ function DashboardList(props: DashboardListProps) {
   );
   const canReadTag = findPermission('can_read', 'Tag', roles);
 
-  // --- THAY ĐỔI: State lưu trữ Tab đang được chọn ---
-  const [activeTab, setActiveTab] = useState('ALL');
-  // --------------------------------------------------
+  // --- 1. KIỂM TRA QUYỀN ADMIN ---
+  // Kiểm tra xem user có role "Admin" hay không
+  const isAdmin = useMemo(
+    () => Object.keys(roles || {}).includes('Admin'),
+    [roles],
+  );
 
   const {
     state: {
@@ -221,6 +222,50 @@ function DashboardList(props: DashboardListProps) {
     undefined,
     DASHBOARD_COLUMNS_TO_FETCH,
   );
+
+  // --- 2. LOGIC LỌC TABS HIỂN THỊ ---
+  const visibleTabs = useMemo(() => {
+    return DASHBOARD_TABS_CONFIG.filter(tab => {
+      // Tab 'Tất cả': Chỉ hiện nếu là Admin
+      if (tab.key === 'ALL') {
+        return isAdmin;
+      }
+
+      // Tab 'Yêu thích': Luôn hiện với mọi user
+      if (tab.key === 'favorite') {
+        return true;
+      }
+
+      // Các Tab Tag (TC, KPI...):
+      // Chỉ hiện nếu trong danh sách dashboards (mà user nhìn thấy) có ít nhất 1 cái chứa Tag này
+      const hasDashboardWithTag = dashboards.some(
+        d =>
+          d.tags &&
+          d.tags.some(
+            t => t.name?.toUpperCase() === tab.tagName?.toUpperCase(),
+          ),
+      );
+
+      return hasDashboardWithTag;
+    });
+  }, [dashboards, isAdmin]);
+
+  // --- 3. QUẢN LÝ TAB ĐANG CHỌN (ACTIVE TAB) ---
+  // Khởi tạo tab mặc định: Nếu là Admin thì vào 'ALL', nếu không thì vào 'favorite'
+  const [activeTab, setActiveTab] = useState(() => {
+    return isAdmin ? 'ALL' : 'favorite';
+  });
+
+  // Effect: Tự động chuyển tab nếu tab hiện tại không còn hợp lệ (ví dụ mất quyền)
+  useEffect(() => {
+    const isCurrentTabVisible = visibleTabs.find(t => t.key === activeTab);
+    // Nếu tab hiện tại không có trong danh sách hiển thị, chuyển về tab đầu tiên
+    if (!isCurrentTabVisible && visibleTabs.length > 0) {
+      setActiveTab(visibleTabs[0].key);
+    }
+  }, [visibleTabs, activeTab]);
+  // ----------------------------------------------
+
   const dashboardIds = useMemo(() => dashboards.map(d => d.id), [dashboards]);
   const [saveFavoriteStatus, favoriteStatus] = useFavoriteStatus(
     'dashboard',
@@ -693,16 +738,17 @@ function DashboardList(props: DashboardListProps) {
             });
           }
 
-          // --- THAY ĐỔI: Logic lọc Dashboard theo Tab và Yêu thích ---
+          // Lấy cấu hình của tab hiện tại để lọc
           const currentTabConfig = DASHBOARD_TABS_CONFIG.find(
             t => t.key === activeTab,
           );
 
+          // Lọc danh sách Dashboard theo Tab
           const filteredDashboards = dashboards.filter(d => {
             // 1. Tab Tất cả: Lấy hết
             if (activeTab === 'ALL') return true;
 
-            // 2. Tab Yêu thích: Kiểm tra trong biến state favoriteStatus (user đã tick sao)
+            // 2. Tab Yêu thích
             if (activeTab === 'favorite') {
               return favoriteStatus[d.id] === true;
             }
@@ -712,14 +758,12 @@ function DashboardList(props: DashboardListProps) {
 
             if (!d.tags) return false;
 
-            // So sánh không phân biệt hoa thường
             return d.tags.some(
               tag =>
                 tag.name?.toUpperCase() ===
                 currentTabConfig.tagName?.toUpperCase(),
             );
           });
-          // -----------------------------------------------------
 
           return (
             <>
@@ -763,9 +807,9 @@ function DashboardList(props: DashboardListProps) {
                   onChange={setActiveTab}
                   tabPosition="left"
                 >
-                  {DASHBOARD_TABS_CONFIG.map(tab => (
+                  {/* Duyệt qua visibleTabs để chỉ render các Tab được phép thấy */}
+                  {visibleTabs.map(tab => (
                     <Tabs.TabPane tab={tab.label} key={tab.key}>
-                      {/* Hiển thị ListView với dữ liệu đã lọc (filteredDashboards) */}
                       <div style={{ paddingLeft: '10px', width: '100%' }}>
                         <ListView<Dashboard>
                           bulkActions={bulkActions}
