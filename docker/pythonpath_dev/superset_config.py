@@ -45,7 +45,6 @@ ENABLE_CORS = True
 TALISMAN_ENABLED = False 
 WTF_CSRF_ENABLED = False
 ENABLE_UI_THEME_ADMINISTRATION = True
-
 BABEL_DEFAULT_LOCALE = 'vi'
 # OAUTH_PROVIDERS = [
 #     {
@@ -65,17 +64,10 @@ BABEL_DEFAULT_LOCALE = 'vi'
 # ]
 CORS_OPTIONS = {
     'supports_credentials': True,
-    'allow_headers': ['Authorization', 'Content-Type', 'X-CSRFToken'], # <--- BẮT BUỘC PHẢI CÓ DÒNG NÀY
-    'resources': [r"/api/*"], # Cho phép mọi API
-    'origins': ['*'] # Môi trường Dev thì OK, Prod nên hạn chế
+    'allow_headers': ['*'],
+    'resources': ['*'],
+    'origins': ['*'] # Môi trường Dev thì để *, Prod thì điền IP máy bạn vào
 }
-WTF_CSRF_EXEMPT_LIST = [
-    'superset.security.login',
-    'superset.views.core.log',
-    'superset.charts.api.data',
-    'superset.dashboards.api.get',
-    'superset.datasets.api.get'
-]
 LOGO_TARGET_PATH = '/dashboard/list/'
 LANDING_PAGE = '/dashboard/list/'
 DASHBOARD_RBAC = True
