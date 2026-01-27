@@ -41,6 +41,9 @@ EXAMPLES_PASSWORD = os.getenv("EXAMPLES_PASSWORD")
 EXAMPLES_HOST = os.getenv("EXAMPLES_HOST")
 EXAMPLES_PORT = os.getenv("EXAMPLES_PORT")
 EXAMPLES_DB = os.getenv("EXAMPLES_DB")
+ENABLE_CORS = True
+TALISMAN_ENABLED = False 
+WTF_CSRF_ENABLED = False
 ENABLE_UI_THEME_ADMINISTRATION = True
 BABEL_DEFAULT_LOCALE = 'vi'
 # OAUTH_PROVIDERS = [
@@ -59,6 +62,12 @@ BABEL_DEFAULT_LOCALE = 'vi'
 #         },
 #     }
 # ]
+CORS_OPTIONS = {
+    'supports_credentials': True,
+    'allow_headers': ['*'],
+    'resources': ['*'],
+    'origins': ['*'] # Môi trường Dev thì để *, Prod thì điền IP máy bạn vào
+}
 LOGO_TARGET_PATH = '/dashboard/list/'
 LANDING_PAGE = '/dashboard/list/'
 DASHBOARD_RBAC = True
