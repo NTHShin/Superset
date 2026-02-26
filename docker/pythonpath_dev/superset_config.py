@@ -23,7 +23,7 @@
 import logging
 import os
 import sys
-
+ 
 from celery.schedules import crontab
 from flask_caching.backends.filesystemcache import FileSystemCache
 # from flask_appbuilder.security.manager import AUTH_OAUTH
@@ -35,7 +35,7 @@ DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
 DATABASE_HOST = os.getenv("DATABASE_HOST")
 DATABASE_PORT = os.getenv("DATABASE_PORT")
 DATABASE_DB = os.getenv("DATABASE_DB")
-
+ 
 EXAMPLES_USER = os.getenv("EXAMPLES_USER")
 EXAMPLES_PASSWORD = os.getenv("EXAMPLES_PASSWORD")
 EXAMPLES_HOST = os.getenv("EXAMPLES_HOST")
@@ -70,15 +70,15 @@ CORS_OPTIONS = {
 }
 LOGO_TARGET_PATH = '/dashboard/list/'
 LANDING_PAGE = '/dashboard/list/'
-DASHBOARD_RBAC = True
+DASHBOARD_RBAC = False
 FAB_API_MAX_PAGE_SIZE = 200
 FAB_ADD_SECURITY_VIEWS = True
 LANGUAGES = {
     'en': {'flag': 'us', 'name': 'English'},
     'vi': {'flag': 'vn', 'name': 'Tiếng Việt'}, 
 }
-
-
+ 
+ 
 THEME_DEFAULT = {
     "token": {
         "colorBgBase": "#FEFFFF",
@@ -90,7 +90,7 @@ THEME_DEFAULT = {
         },
     },
 }
-
+ 
 # Optional: Dark theme configuration
 THEME_DARK = {
     "algorithm": "dark",
@@ -103,10 +103,9 @@ THEME_ORANGE = {
     "name": "Orange Theme",  
     "key": "theme_orange",   
     "algorithm": "orange",
-
+ 
     "token": {
         "colorBgBase": "#FFC779", 
-        
     },
     "component": {
         "Button": {
@@ -120,20 +119,20 @@ SQLALCHEMY_DATABASE_URI = (
     f"{DATABASE_USER}:{DATABASE_PASSWORD}@"
     f"{DATABASE_HOST}:{DATABASE_PORT}/{DATABASE_DB}"
 )
-
+ 
 SQLALCHEMY_EXAMPLES_URI = (
     f"{DATABASE_DIALECT}://"
     f"{EXAMPLES_USER}:{EXAMPLES_PASSWORD}@"
     f"{EXAMPLES_HOST}:{EXAMPLES_PORT}/{EXAMPLES_DB}"
 )
-
+ 
 REDIS_HOST = os.getenv("REDIS_HOST", "redis")
 REDIS_PORT = os.getenv("REDIS_PORT", "6379")
 REDIS_CELERY_DB = os.getenv("REDIS_CELERY_DB", "0")
 REDIS_RESULTS_DB = os.getenv("REDIS_RESULTS_DB", "1")
-
+ 
 RESULTS_BACKEND = FileSystemCache("/app/superset_home/sqllab")
-
+ 
 CACHE_CONFIG = {
     "CACHE_TYPE": "RedisCache",
     "CACHE_DEFAULT_TIMEOUT": 300,
@@ -144,8 +143,8 @@ CACHE_CONFIG = {
 }
 DATA_CACHE_CONFIG = CACHE_CONFIG
 THUMBNAIL_CACHE_CONFIG = CACHE_CONFIG
-
-
+ 
+ 
 class CeleryConfig:
     broker_url = f"redis://{REDIS_HOST}:{REDIS_PORT}/{REDIS_CELERY_DB}"
     imports = (
@@ -167,11 +166,11 @@ class CeleryConfig:
             "schedule": crontab(minute=10, hour=0),
         },
     }
-
-
+ 
+ 
 CELERY_CONFIG = CeleryConfig
 
-FEATURE_FLAGS = {"ALERT_REPORTS": True, "TAGGING_SYSTEM": True, "DASHBOARD_RBAC": False}
+FEATURE_FLAGS = {"ALERT_REPORTS": True, "TAGGING_SYSTEM": True}
 ALERT_REPORTS_NOTIFICATION_DRY_RUN = True
 WEBDRIVER_BASEURL = f"http://superset_app{os.environ.get('SUPERSET_APP_ROOT', '/')}/"  # When using docker compose baseurl should be http://superset_nginx{ENV{BASEPATH}}/  # noqa: E501
 # The base URL for the email report hyperlinks.
@@ -179,10 +178,10 @@ WEBDRIVER_BASEURL_USER_FRIENDLY = (
     f"http://localhost:8888/{os.environ.get('SUPERSET_APP_ROOT', '/')}/"
 )
 SQLLAB_CTAS_NO_LIMIT = True
-
+ 
 log_level_text = os.getenv("SUPERSET_LOG_LEVEL", "INFO")
 LOG_LEVEL = getattr(logging, log_level_text.upper(), logging.INFO)
-
+ 
 if os.getenv("CYPRESS_CONFIG") == "true":
     # When running the service as a cypress backend, we need to import the config
     # located @ tests/integration_tests/superset_test_config.py
@@ -192,9 +191,9 @@ if os.getenv("CYPRESS_CONFIG") == "true":
     )
     sys.path.insert(0, module_folder)
     from superset_test_config import *  # noqa
-
+ 
     sys.path.pop(0)
-
+ 
 #
 # Optionally import superset_config_docker.py (which will have been included on
 # the PYTHONPATH) in order to allow for local settings to be overridden
@@ -202,7 +201,7 @@ if os.getenv("CYPRESS_CONFIG") == "true":
 try:
     import superset_config_docker
     from superset_config_docker import *  # noqa: F403
-
+ 
     logger.info(
         f"Loaded your Docker configuration at [{superset_config_docker.__file__}]"
     )
