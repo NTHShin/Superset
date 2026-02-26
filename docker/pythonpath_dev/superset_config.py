@@ -81,6 +81,7 @@ LANDING_PAGE = '/dashboard/list/'
 DASHBOARD_RBAC = True
 FAB_API_MAX_PAGE_SIZE = 200
 FAB_ADD_SECURITY_VIEWS = True
+
 LANGUAGES = {
     'en': {'flag': 'us', 'name': 'English'},
     'vi': {'flag': 'vn', 'name': 'Tiếng Việt'}, 
