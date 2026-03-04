@@ -28,7 +28,7 @@ from celery.schedules import crontab
 from flask_caching.backends.filesystemcache import FileSystemCache
 from datetime import timedelta
 JWT_ACCESS_TOKEN_EXPIRES = timedelta(days=1)
-SECRET_KEY = "this_is_a_dev"
+SECRET_KEY = 'Superset_Secret_2026_Key_Secure'
 # Cho phép sử dụng Header Authorization: Bearer <Token>
 JWT_AUTH_HEADER_NAME = "Authorization"
 JWT_AUTH_HEADER_TYPE = "Bearer"
