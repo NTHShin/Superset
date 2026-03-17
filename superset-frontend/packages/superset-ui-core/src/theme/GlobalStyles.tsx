@@ -86,6 +86,51 @@ export const GlobalStyles = () => {
         [role='button'] {
           cursor: pointer;
         }
+
+        /* Custom global CSS overrides (from user requests) */
+        .superset-nonw36 {
+          background-color: #1250AE !important;
+          border-bottom: 1px solid #f3f4f6 !important;
+          padding: 0 16px !important;
+          z-index: 10 !important;
+        }
+
+        .superset-7755j1 {
+          background-color: #1250AE !important;
+          color: white !important;
+        }
+
+        .ant-menu-light .ant-menu-item,
+        .ant-menu-light .ant-menu-submenu-title {
+          color: white !important;
+        }
+
+        .superset-1tksnlm {
+          font-size: x-large !important;
+        }
+
+        .superset-1tksnlm .dynamic-title-input {
+          font-weight: bold !important;
+        }
+
+        /* Logo replacement: hide original image and use a white-logo background
+           - keeps layout height at 40px and inserts a left padded background image
+           - also hides any nested <img> to be safe */
+        .ant-image-img.superset-sucx7y {
+          display: inline-block !important;
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          width: 0 !important;
+          height: 40px !important;
+          padding-left: 100px !important;
+          background: url("/static/assets/images/logoPACtrang.png") no-repeat center left !important;
+          background-size: contain !important;
+          overflow: hidden !important;
+        }
+
+        .ant-image-img.superset-sucx7y img {
+          display: none !important;
+        }
       `}
     />
   );
