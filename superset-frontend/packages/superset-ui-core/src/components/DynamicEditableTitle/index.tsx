@@ -47,7 +47,7 @@ const titleStyles = (theme: SupersetTheme) => css`
     white-space: nowrap;
     padding: 0;
     color: ${theme.colorText};
-    background-color: ${theme.colorBgContainer};
+    
 
     &::placeholder {
       color: ${theme.colorTextTertiary};
