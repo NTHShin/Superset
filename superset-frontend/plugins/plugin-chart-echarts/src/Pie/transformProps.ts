@@ -223,7 +223,7 @@ export default function transformProps(
           color: theme.colorText,
           opacity:
             filterState.selectedValues &&
-            !filterState.selectedValues.includes(otherName)
+              !filterState.selectedValues.includes(otherName)
               ? OpacityEnum.SemiTransparent
               : OpacityEnum.NonTransparent,
         },
@@ -245,7 +245,7 @@ export default function transformProps(
     };
   }, {});
 
-  const { setDataMask = () => {}, onContextMenu } = hooks;
+  const { setDataMask = () => { }, onContextMenu } = hooks;
   const colorFn = CategoricalColorNamespace.getScale(colorScheme as string);
 
   let totalValue = 0;
@@ -376,11 +376,26 @@ export default function transformProps(
     legendOrientation,
     legendMargin,
   );
+  // Reduce chart padding specifically for pie to maximize pie size while
+  // preserving space for legends/labels. We conservatively reduce left/right
+  // up to 80% but cap at 40px, and top/bottom up to 50% capped at 20px.
+  const piePadding = {
+    left: Math.max(0, chartPadding.left - Math.min(chartPadding.left * 0.8, 40)),
+    right: Math.max(0, chartPadding.right - Math.min(chartPadding.right * 0.8, 40)),
+    top: Math.max(0, chartPadding.top - Math.min(chartPadding.top * 0.5, 20)),
+    bottom: Math.max(0, chartPadding.bottom - Math.min(chartPadding.bottom * 0.5, 20)),
+  };
+  // If labels are rendered outside, keep a small minimum horizontal padding
+  // to provide room for label lines and avoid clipping.
+  if (labelsOutside && showLabels) {
+    piePadding.left = Math.max(piePadding.left, 10);
+    piePadding.right = Math.max(piePadding.right, 10);
+  }
 
   const series: PieSeriesOption[] = [
     {
       type: 'pie',
-      ...chartPadding,
+      ...piePadding,
       animation: false,
       roseType: roseType || undefined,
       radius: [`${donut ? innerRadius : 0}%`, `${outerRadius}%`],
@@ -390,15 +405,15 @@ export default function transformProps(
       minShowLabelAngle,
       label: labelsOutside
         ? {
-            ...defaultLabel,
-            position: 'outer',
-            alignTo: 'none',
-            bleedMargin: 5,
-          }
+          ...defaultLabel,
+          position: 'outer',
+          alignTo: 'none',
+          bleedMargin: 10,
+        }
         : {
-            ...defaultLabel,
-            position: 'inner',
-          },
+          ...defaultLabel,
+          position: 'inner',
+        },
       emphasis: {
         label: {
           show: true,
@@ -439,16 +454,18 @@ export default function transformProps(
     },
     graphic: showTotal
       ? {
-          type: 'text',
-          ...getTotalValuePadding({ chartPadding, donut, width, height }),
-          style: {
-            text: t('Total: %s', numberFormatter(totalValue)),
-            fontSize: 16,
-            fontWeight: 'bold',
-            fill: theme.colorText,
-          },
-          z: 10,
-        }
+        type: 'text',
+        // Align total text with the pie's available drawing area so it stays
+        // visually centered when we reduce padding to enlarge the pie.
+        ...getTotalValuePadding({ chartPadding: piePadding, donut, width, height }),
+        style: {
+          text: t('Total: %s', numberFormatter(totalValue)),
+          fontSize: 16,
+          fontWeight: 'bold',
+          fill: theme.colorText,
+        },
+        z: 10,
+      }
       : null,
     series,
   };
