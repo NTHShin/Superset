@@ -76,17 +76,17 @@ const targetValueValidator =
     compare: (targetValue: number, compareValue: number) => boolean,
     rejectMessage: string,
   ) =>
-  (targetValue: number | string) =>
-  (_: any, compareValue: number | string) => {
-    if (
-      !targetValue ||
-      !compareValue ||
-      compare(Number(targetValue), Number(compareValue))
-    ) {
-      return Promise.resolve();
-    }
-    return Promise.reject(new Error(rejectMessage));
-  };
+    (targetValue: number | string) =>
+      (_: any, compareValue: number | string) => {
+        if (
+          !targetValue ||
+          !compareValue ||
+          compare(Number(targetValue), Number(compareValue))
+        ) {
+          return Promise.resolve();
+        }
+        return Promise.reject(new Error(rejectMessage));
+      };
 
 const targetValueLeftValidator = targetValueValidator(
   (target: number, val: number) => target > val,
@@ -129,9 +129,9 @@ const shouldFormItemUpdate = (
   currentValues: ConditionalFormattingConfig,
 ) =>
   isOperatorNone(prevValues.operator) !==
-    isOperatorNone(currentValues.operator) ||
+  isOperatorNone(currentValues.operator) ||
   isOperatorMultiValue(prevValues.operator) !==
-    isOperatorMultiValue(currentValues.operator);
+  isOperatorMultiValue(currentValues.operator);
 
 const renderOperator = ({ showOnlyNone }: { showOnlyNone?: boolean } = {}) => (
   <FormItem
@@ -209,8 +209,8 @@ export const FormattingPopoverContent = ({
   const colorScheme = colorSchemeOptions();
   const [showOperatorFields, setShowOperatorFields] = useState(
     config === undefined ||
-      (config?.colorScheme !== ColorSchemeEnum.Green &&
-        config?.colorScheme !== ColorSchemeEnum.Red),
+    (config?.colorScheme !== ColorSchemeEnum.Green &&
+      config?.colorScheme !== ColorSchemeEnum.Red),
   );
   const handleChange = (event: any) => {
     setShowOperatorFields(

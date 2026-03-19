@@ -75,6 +75,11 @@ export class Theme {
     colorError: '#e04355',
     colorWarning: '#fcc700',
     colorSuccess: '#5ac189',
+    // Stronger background tokens for conditional formatting
+    // Used by ConditionalFormattingControl's color scheme options
+    colorErrorBg: '#FF0000',
+    colorWarningBg: '#FFFF00',
+    colorSuccessBg: '#00FF00',
     colorInfo: '#66bcfe',
     colorBasic: '#44C4B8',
 

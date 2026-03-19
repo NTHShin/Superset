@@ -46,6 +46,9 @@ TALISMAN_ENABLED = False
 WTF_CSRF_ENABLED = False
 ENABLE_UI_THEME_ADMINISTRATION = True
 BABEL_DEFAULT_LOCALE = 'vi'
+
+SUPERSET_DASHBOARD_POSITION_DATA_LIMIT = 524288
+
 # OAUTH_PROVIDERS = [
 #     {
 #         "name": "azure",               # tên này sẽ xuất hiện trong bootstrap -> UI sẽ show button

@@ -376,26 +376,11 @@ export default function transformProps(
     legendOrientation,
     legendMargin,
   );
-  // Reduce chart padding specifically for pie to maximize pie size while
-  // preserving space for legends/labels. We conservatively reduce left/right
-  // up to 80% but cap at 40px, and top/bottom up to 50% capped at 20px.
-  const piePadding = {
-    left: Math.max(0, chartPadding.left - Math.min(chartPadding.left * 0.8, 40)),
-    right: Math.max(0, chartPadding.right - Math.min(chartPadding.right * 0.8, 40)),
-    top: Math.max(0, chartPadding.top - Math.min(chartPadding.top * 0.5, 20)),
-    bottom: Math.max(0, chartPadding.bottom - Math.min(chartPadding.bottom * 0.5, 20)),
-  };
-  // If labels are rendered outside, keep a small minimum horizontal padding
-  // to provide room for label lines and avoid clipping.
-  if (labelsOutside && showLabels) {
-    piePadding.left = Math.max(piePadding.left, 10);
-    piePadding.right = Math.max(piePadding.right, 10);
-  }
 
   const series: PieSeriesOption[] = [
     {
       type: 'pie',
-      ...piePadding,
+      ...chartPadding,
       animation: false,
       roseType: roseType || undefined,
       radius: [`${donut ? innerRadius : 0}%`, `${outerRadius}%`],
@@ -408,7 +393,7 @@ export default function transformProps(
           ...defaultLabel,
           position: 'outer',
           alignTo: 'none',
-          bleedMargin: 10,
+          bleedMargin: 5,
         }
         : {
           ...defaultLabel,
@@ -455,9 +440,7 @@ export default function transformProps(
     graphic: showTotal
       ? {
         type: 'text',
-        // Align total text with the pie's available drawing area so it stays
-        // visually centered when we reduce padding to enlarge the pie.
-        ...getTotalValuePadding({ chartPadding: piePadding, donut, width, height }),
+        ...getTotalValuePadding({ chartPadding, donut, width, height }),
         style: {
           text: t('Total: %s', numberFormatter(totalValue)),
           fontSize: 16,
