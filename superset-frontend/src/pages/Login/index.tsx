@@ -104,10 +104,7 @@ const StyledCard = styled(Card)`
     .ant-card-head-title {
       font-size: 20px;
       font-weight: bold;
-      
-      /* SỬA TẠI ĐÂY: Thêm đường gạch chân giống thẻ hr */
-      border-bottom: 1px solid #d9d9d9; 
-      padding-bottom: 12px; /* Tạo khoảng cách giữa chữ và đường kẻ */
+      padding-bottom: 12px;
     }
   `}
 `;
