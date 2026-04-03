@@ -101,10 +101,20 @@ const StyledCard = styled(Card)`
     .ant-form-item-label label {
       color: ${theme.colorPrimary};
     }
+    
+    /* SỬA TẠI ĐÂY: Can thiệp trực tiếp vào thẻ head của Card để override padding mặc định */
+    .ant-card-head {
+      padding: 30px 24px 0 24px !important;
+    }
+
     .ant-card-head-title {
-      font-size: 20px;
+      font-size: 18px; 
       font-weight: bold;
-      padding-bottom: 12px;
+      white-space: normal; 
+      line-height: 1.4;
+      
+      border-bottom: 1px solid #d9d9d9; 
+      padding-bottom: 12px; 
     }
   `}
 `;
@@ -123,7 +133,7 @@ const LoginContainer = styled.div`
   left: 0;
   width: 100%;
   height: 100vh;
-  z-index: 1000;
+  z-index: 1000; 
 
   background-image: url(${bgImage});
   background-size: cover;
@@ -133,7 +143,7 @@ const LoginContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  overflow: hidden;
+  overflow: hidden; 
 
   image-rendering: -webkit-optimize-contrast;
   image-rendering: crisp-edges;
