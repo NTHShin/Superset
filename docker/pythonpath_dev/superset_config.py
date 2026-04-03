@@ -49,22 +49,6 @@ BABEL_DEFAULT_LOCALE = 'vi'
 ENABLE_PROXY_FIX = True
 SUPERSET_DASHBOARD_POSITION_DATA_LIMIT = 524288
 
-# OAUTH_PROVIDERS = [
-#     {
-#         "name": "azure",               # tên này sẽ xuất hiện trong bootstrap -> UI sẽ show button
-#         "icon": "fa-windows",          # optional
-#         "token_key": "access_token",
-#         "remote_app": {
-#             # Nếu chỉ muốn hiển thị button, bạn có thể dùng dummy ID/secret:
-#             "client_id": os.environ.get("AZURE_CLIENT_ID", "DUMMY_CLIENT_ID"),
-#             "client_secret": os.environ.get("AZURE_CLIENT_SECRET", "DUMMY_SECRET"),
-#             "api_base_url": "https://login.microsoftonline.com/common/v2.0",
-#             "access_token_url": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
-#             "authorize_url": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
-#             "client_kwargs": {"scope": "openid profile email"},
-#         },
-#     }
-# ]
 CORS_OPTIONS = {
     'supports_credentials': True,
     'allow_headers': ['*'],
@@ -79,42 +63,6 @@ FAB_ADD_SECURITY_VIEWS = True
 LANGUAGES = {
     'en': {'flag': 'us', 'name': 'English'},
     'vi': {'flag': 'vn', 'name': 'Tiếng Việt'}, 
-}
- 
- 
-THEME_DEFAULT = {
-    "token": {
-        "colorBgBase": "#FEFFFF",
-        # ... your theme JSON configuration
-    },
-    "component": {
-        "Button": {
-            "colorPrimaryBg": "#e67716",
-        },
-    },
-}
- 
-# Optional: Dark theme configuration
-THEME_DARK = {
-    "algorithm": "dark",
-    "token": {
-        "colorBgBase": "#343232"
-        # ... your dark theme overrides
-    }
-}
-THEME_ORANGE = {
-    "name": "Orange Theme",  
-    "key": "theme_orange",   
-    "algorithm": "orange",
- 
-    "token": {
-        "colorBgBase": "#FFC779", 
-    },
-    "component": {
-        "Button": {
-            "colorPrimaryBg": "#e67716", 
-        },
-    },
 }
 # The SQLAlchemy connection string.
 SQLALCHEMY_DATABASE_URI = (

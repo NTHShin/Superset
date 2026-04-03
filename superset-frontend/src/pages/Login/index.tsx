@@ -30,7 +30,7 @@ import {
 import { useState, useMemo } from 'react';
 import { capitalize } from 'lodash/fp';
 import getBootstrapData from 'src/utils/getBootstrapData';
-import rightVisualDefault from 'src/assets/images/leftimage.jpg';
+import rightVisualDefault from 'src/assets/images/bannerpac.png';
 
 const StyledSignInButton = styled(Button)`
   &.ant-btn-primary:not([disabled]):not(.ant-btn-dangerous) {
