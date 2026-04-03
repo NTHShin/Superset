@@ -183,6 +183,11 @@ const DASHBOARD_TABS_CONFIG = [
     label: 'Công ty con',
     tagName: 'CTC',
   },
+  {
+    key: 'CNTT',
+    label: 'CNTT',
+    tagName: 'CNTT',
+  },
 ];
 // --------------------------------
 

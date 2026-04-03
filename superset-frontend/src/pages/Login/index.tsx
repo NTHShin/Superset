@@ -30,7 +30,10 @@ import {
 import { useState, useMemo } from 'react';
 import { capitalize } from 'lodash/fp';
 import getBootstrapData from 'src/utils/getBootstrapData';
-import rightVisualDefault from 'src/assets/images/bannerpac.png';
+
+// Import ảnh nền tĩnh và ảnh logo
+import bgImage from 'src/assets/images/backgroundlogin.jpg';
+import logoImage from 'src/assets/images/logoPACHC.png';
 
 const StyledSignInButton = styled(Button)`
   &.ant-btn-primary:not([disabled]):not(.ant-btn-dangerous) {
@@ -85,45 +88,27 @@ enum AuthType {
   AuthOauth = 4,
 }
 
-const Footer = styled.footer`
-  width: 100%;
-  text-align: center;
-  padding: 12px 0;
-  color: ${({ theme }) => theme.colorTextSecondary};
-  font-size: 12px;
-  user-select: none;
-`;
-
-const FooterBox = styled('div')`
-  ${({ theme }) => css`
-    display: inline-block;
-    background: ${theme.colorBgContainer};
-    padding: 8px 14px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(2, 6, 23, 0.06);
-    border: 1px solid ${theme.colorBorderSecondary};
-    color: ${theme.colorTextSecondary};
-    font-size: ${theme.fontSizeSM}px;
-  `}
-`;
-
 const StyledCard = styled(Card)`
   ${({ theme }) => css`
-    max-width: 400px;
+    max-width: 420px;
     width: 100%;
-    margin-top: ${theme.marginXL}px;
-    color: ${theme.colorBgContainer};
-    background: ${theme.colorBgBase};
-    -webkit-backdrop-filter: blur(8px);
-    backdrop-filter: blur(8px);
-    box-shadow: 0 10px 25px rgba(2, 6, 23, 0.08);
+    margin: 0 auto;
+    border-radius: 12px;
+    color: ${theme.colorText};
+    background: ${theme.colorBgContainer};
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    
     .ant-form-item-label label {
       color: ${theme.colorPrimary};
     }
-      .ant-card-head-title {
-        font-size: 24px;
-        font-weight: bold;
-      }
+    .ant-card-head-title {
+      font-size: 20px;
+      font-weight: bold;
+      
+      /* SỬA TẠI ĐÂY: Thêm đường gạch chân giống thẻ hr */
+      border-bottom: 1px solid #d9d9d9; 
+      padding-bottom: 12px; /* Tạo khoảng cách giữa chữ và đường kẻ */
+    }
   `}
 `;
 
@@ -131,6 +116,135 @@ const StyledLabel = styled(Typography.Text)`
   ${({ theme }) => css`
     font-size: ${theme.fontSizeSM}px;
   `}
+`;
+
+/* ===== CÁC KHỐI GIAO DIỆN MỚI CHO TRANG LOGIN ===== */
+
+const LoginContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 1000;
+
+  background-image: url(${bgImage});
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+
+  image-rendering: -webkit-optimize-contrast;
+  image-rendering: crisp-edges;
+`;
+
+const Ribbon = styled.div`
+  display: flex;
+  align-items: stretch;
+  width: 90%;
+  max-width: 1050px; 
+  max-height: 85vh; 
+  position: relative;
+
+  @media (max-width: 900px) {
+    flex-direction: column;
+    align-items: center;
+    max-height: 95vh;
+  }
+`;
+
+const LeftPanel = styled.div`
+  background-color: #3b60aa; 
+  padding: 50px 45px; 
+  z-index: 2;
+  position: relative;
+  box-shadow: 15px 15px 30px rgba(0,0,0,0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  @media (max-width: 900px) {
+    width: 100%;
+    padding: 30px 20px;
+  }
+`;
+
+const RightPanel = styled.div`
+  background-color: #4872c6d9; 
+  padding: 40px 50px;
+  z-index: 1;
+  flex: 1;
+  
+  margin-top: 40px;
+  margin-bottom: 40px;
+  margin-left: 0; 
+  position: relative;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -40px;
+    left: 0; 
+    width: 0;
+    height: 0;
+    border-bottom: 40px solid #233e75; 
+    border-right: 40px solid transparent; 
+  }
+  
+  &::after {
+    content: '';
+    position: absolute;
+    bottom: -40px;
+    left: 0; 
+    width: 0;
+    height: 0;
+    border-top: 40px solid #233e75;
+    border-right: 40px solid transparent; 
+  }
+
+  @media (max-width: 900px) {
+    width: 100%;
+    margin-top: 0;
+    margin-left: 0;
+    &::before, &::after {
+      display: none;
+    }
+  }
+`;
+
+/* Giao diện cho ảnh Logo */
+const StyledLogo = styled.img`
+  width: 100%;
+  max-width: 450px; 
+  max-height: 350px; 
+  object-fit: contain; 
+  
+  filter: drop-shadow(2px 4px 6px rgba(0, 0, 0, 0.2));
+  transition: transform 0.3s ease;
+  
+  &:hover {
+    transform: scale(1.02);
+  }
+`;
+
+/* Giao diện cho Slogan */
+const LogoSlogan = styled.div`
+  font-size: 24px;
+  font-style: italic;
+  color: #00d2ff; 
+  font-family: "Times New Roman", Times, serif;
+  text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+  margin-top: 15px; 
+  text-align: center;
 `;
 
 export default function Login() {
@@ -142,7 +256,6 @@ export default function Login() {
     try {
       const params = new URLSearchParams(window.location.search);
       const next = params.get('next');
-      // THAY ĐỔI: Nếu không có tham số next hoặc next là trang home, redirect về /dashboard/list/
       if (!next || next === '/' || next === '/superset/welcome/') {
         return '/dashboard/list/';
       }
@@ -193,249 +306,126 @@ export default function Login() {
     return undefined;
   };
 
-  const rightVisualUrl =
-    process.env.REACT_APP_LOGIN_RIGHT_IMAGE ||
-    rightVisualDefault;
-
-  const SplitLayout = styled.div`
-    display: flex;
-    flex-direction: column;
-    min-height: 100vh;
-    width: 100%;
-    align-items: stretch;
-    overflow: hidden;
-  `;
-
-  const RightVisual = styled.div`
-    ${({ theme }) => css`
-      display: none;
-      @media (min-width: 1024px) {
-        display: block;
-        position: absolute;
-        left: 24px;
-        bottom: 24px;
-        width: 120%;
-        min-width: 340px;
-        height: 108%;
-        background-color: ${theme.colorBgContainer};
-        z-index: 2;
-        background-size: cover;
-        background-position: center;
-        background-repeat: no-repeat;
-        position: relative;
-        border-radius: 12px;
-        transform: scale(0.96);
-        overflow: hidden;
-        box-shadow: 0 8px 22px rgba(2,6,23,0.08);
-        transition: transform 200ms ease;
-        &::before {
-          content: '';
-          position: absolute;
-          inset: 8px;
-          border-radius: 10px;
-          background-image: url("${rightVisualUrl}");
-          background-size: cover;
-          background-position: center;
-          background-repeat: no-repeat;
-          pointer-events: none;
-        }
-        &::after {
-          content: '';
-          position: absolute;
-          inset: 8px;
-          border-radius: 10px;
-          background: rgba(0, 0, 0, 0.04);
-          pointer-events: none;
-        }
-      }
-    `}
-  `;
-
-  const LeftContent = styled.div`
-    width: 65%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    padding: 20px 0;
-    box-sizing: border-box;
-
-    @media (min-width: 1024px) {
-    ${({ theme }) => css`
-      flex: 1 1 auto;
-      min-width: 0;
-      min-height: 100%;
-      padding: 36px;
-      align-items: center;
-      margin-left: 0;
-      position: relative;
-      background-size: cover;
-      background-position: center;
-      background-repeat: no-repeat;
-      background-color: ${theme.colorBgContainer};
-    }
-      `}
-  `;
-
-  const MainContent = styled.div`
-    display: flex;
-    flex: 1 1 auto;
-    width: 100%;
-    gap: 0;
-    align-items: stretch;
-    justify-content: stretch;
-  `;
-
-  const CenterBox = styled.div`
-    ${({ theme }) => css`
-      width: 75%;
-      max-width: 1280px;
-      margin: 15px auto;
-      padding: 12px;
-      display: flex;
-      flex-direction: column;
-      border-radius: 15px;
-      overflow: hidden;
-      background: ${theme.colorBgContainer};
-      box-shadow: 0 12px 30px rgba(2,6,23,0.08);
-      min-height: 520px;
-      position: relative;
-
-      @media (min-width: 1024px) {
-        flex-direction: row;
-      }
-    `}
-  `;
-
   return (
-    <SplitLayout>
-      <MainContent>
-        <CenterBox>
-          <LeftContent>
-            <Flex
-              justify="start"
-              align="center"
-              data-test="login-form"
-              css={css`
-          width: 100%;
-          max-width: 520px;
-          margin-right: auto;
-        `}
-            >
-              <StyledCard title={t('Welcome back')} padded>
-                {authType === AuthType.AuthOID && (
-                  <Flex justify="center" vertical gap="middle">
-                    <Form layout="vertical" requiredMark="optional" form={form}>
-                      {providers.map((provider: OIDProvider) => (
-                        <Form.Item<LoginForm> key={provider.name}>
-                          <Button
-                            href={buildProviderLoginUrl(provider.name)}
-                            block
-                            iconPosition="start"
-                            icon={getAuthIconElement(provider.name)}
-                          >
-                            {t('Sign in with')} {capitalize(provider.name)}
-                          </Button>
-                        </Form.Item>
-                      ))}
-                    </Form>
-                  </Flex>
-                )}
-                {authType === AuthType.AuthOauth && (
-                  <Flex justify="center" gap={0} vertical>
-                    <Form layout="vertical" requiredMark="optional" form={form}>
-                      {providers.map((provider: OAuthProvider) => (
-                        <Form.Item<LoginForm> key={provider.name}>
-                          <Button
-                            href={buildProviderLoginUrl(provider.name)}
-                            block
-                            iconPosition="start"
-                            icon={getAuthIconElement(provider.name)}
-                          >
-                            {t('Sign in with')} {capitalize(provider.name)}
-                          </Button>
-                        </Form.Item>
-                      ))}
-                    </Form>
-                  </Flex>
-                )}
+    <LoginContainer>
+      <Ribbon>
+        {/* KHỐI BÊN TRÁI CHỨA FORM */}
+        <LeftPanel>
+          <StyledCard title={t('HỆ THỐNG BÁO CÁO TẬP ĐOÀN')} padded>
+            {authType === AuthType.AuthOID && (
+              <Flex justify="center" vertical gap="middle">
+                <Form layout="vertical" requiredMark="optional" form={form}>
+                  {providers.map((provider: OIDProvider) => (
+                    <Form.Item<LoginForm> key={provider.name}>
+                      <Button
+                        href={buildProviderLoginUrl(provider.name)}
+                        block
+                        iconPosition="start"
+                        icon={getAuthIconElement(provider.name)}
+                      >
+                        {t('Sign in with')} {capitalize(provider.name)}
+                      </Button>
+                    </Form.Item>
+                  ))}
+                </Form>
+              </Flex>
+            )}
 
-                {(authType === AuthType.AuthDB || authType === AuthType.AuthLDAP) && (
-                  <Flex justify="center" vertical gap="middle">
-                    <Typography.Text type="secondary">
-                      {t('Enter your login and password below:')}
-                    </Typography.Text>
-                    <Form
-                      layout="vertical"
-                      requiredMark="optional"
-                      form={form}
-                      onFinish={onFinish}
+            {authType === AuthType.AuthOauth && (
+              <Flex justify="center" gap={0} vertical>
+                <Form layout="vertical" requiredMark="optional" form={form}>
+                  {providers.map((provider: OAuthProvider) => (
+                    <Form.Item<LoginForm> key={provider.name}>
+                      <Button
+                        href={buildProviderLoginUrl(provider.name)}
+                        block
+                        iconPosition="start"
+                        icon={getAuthIconElement(provider.name)}
+                      >
+                        {t('Sign in with')} {capitalize(provider.name)}
+                      </Button>
+                    </Form.Item>
+                  ))}
+                </Form>
+              </Flex>
+            )}
+
+            {(authType === AuthType.AuthDB || authType === AuthType.AuthLDAP) && (
+              <Flex justify="center" vertical gap="middle">
+                <Typography.Text type="secondary">
+                  {t('Enter your login and password below:')}
+                </Typography.Text>
+                <Form
+                  layout="vertical"
+                  requiredMark="optional"
+                  form={form}
+                  onFinish={onFinish}
+                >
+                  <Form.Item<LoginForm>
+                    label={<StyledLabel>{t('Username:')}</StyledLabel>}
+                    name="username"
+                    rules={[
+                      { required: true, message: t('Please enter your username') },
+                    ]}
+                  >
+                    <Input
+                      autoFocus
+                      prefix={<Icons.UserOutlined iconSize="l" />}
+                      data-test="username-input"
+                    />
+                  </Form.Item>
+                  <Form.Item<LoginForm>
+                    label={<StyledLabel>{t('Password:')}</StyledLabel>}
+                    name="password"
+                    rules={[
+                      { required: true, message: t('Please enter your password') },
+                    ]}
+                  >
+                    <Input.Password
+                      prefix={<Icons.LockOutlined iconSize="l" />}
+                      data-test="password-input"
+                    />
+                  </Form.Item>
+                  <Form.Item label={null}>
+                    <Flex
+                      css={css`
+                        width: 100%;
+                      `}
                     >
-                      <Form.Item<LoginForm>
-                        label={<StyledLabel>{t('Username:')}</StyledLabel>}
-                        name="username"
-                        rules={[
-                          { required: true, message: t('Please enter your username') },
-                        ]}
+                      <StyledSignInButton
+                        block
+                        type="primary"
+                        htmlType="submit"
+                        loading={loading}
+                        data-test="login-button"
                       >
-                        <Input
-                          autoFocus
-                          prefix={<Icons.UserOutlined iconSize="l" />}
-                          data-test="username-input"
-                        />
-                      </Form.Item>
-                      <Form.Item<LoginForm>
-                        label={<StyledLabel>{t('Password:')}</StyledLabel>}
-                        name="password"
-                        rules={[
-                          { required: true, message: t('Please enter your password') },
-                        ]}
-                      >
-                        <Input.Password
-                          prefix={<Icons.LockOutlined iconSize="l" />}
-                          data-test="password-input"
-                        />
-                      </Form.Item>
-                      <Form.Item label={null}>
-                        <Flex
-                          css={css`
-                    width: 100%;
-                  `}
+                        {t('Sign in')}
+                      </StyledSignInButton>
+
+                      {authRegistration && (
+                        <Button
+                          block
+                          type="default"
+                          href="/register/"
+                          data-test="register-button"
                         >
-                          <StyledSignInButton
-                            block
-                            type="primary"
-                            htmlType="submit"
-                            loading={loading}
-                            data-test="login-button"
-                          >
-                            {t('Sign in')}
-                          </StyledSignInButton>
+                          {t('Register')}
+                        </Button>
+                      )}
+                    </Flex>
+                  </Form.Item>
+                </Form>
+              </Flex>
+            )}
+          </StyledCard>
+        </LeftPanel>
 
-                          {authRegistration && (
-                            <Button
-                              block
-                              type="default"
-                              href="/register/"
-                              data-test="register-button"
-                            >
-                              {t('Register')}
-                            </Button>
-                          )}
-                        </Flex>
-                      </Form.Item>
-                    </Form>
-                  </Flex>
-                )}
-              </StyledCard>
-            </Flex>
-          </LeftContent>
-          <RightVisual />
-
-        </CenterBox>
-      </MainContent>
-      {/* <Footer>
-        <FooterBox>© 2025 Pacific Corporation. All rights reserved.</FooterBox>
-      </Footer> */}
-    </SplitLayout>
+        {/* KHỐI BÊN PHẢI CHỨA LOGO */}
+        <RightPanel>
+          <StyledLogo src={logoImage} alt="Pacific Corporation Logo" />
+          <LogoSlogan>Tri thức nâng tầm giá trị</LogoSlogan>
+        </RightPanel>
+      </Ribbon>
+    </LoginContainer>
   );
 }
