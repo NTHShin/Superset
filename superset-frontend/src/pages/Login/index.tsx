@@ -341,18 +341,20 @@ export default function Login() {
             {authType === AuthType.AuthOauth && (
               <Flex justify="center" gap={0} vertical>
                 <Form layout="vertical" requiredMark="optional" form={form}>
-                  {providers.map((provider: OAuthProvider) => (
-                    <Form.Item<LoginForm> key={provider.name}>
-                      <Button
-                        href={buildProviderLoginUrl(provider.name)}
-                        block
-                        iconPosition="start"
-                        icon={getAuthIconElement(provider.name)}
-                      >
-                        {t('Sign in with')} {capitalize(provider.name)}
-                      </Button>
-                    </Form.Item>
-                  ))}
+                  {providers
+                    .filter((p: OAuthProvider) => p.name !== 'microsoft')
+                    .map((provider: OAuthProvider) => (
+                      <Form.Item<LoginForm> key={provider.name}>
+                        <Button
+                          href={buildProviderLoginUrl(provider.name)}
+                          block
+                          iconPosition="start"
+                          icon={getAuthIconElement(provider.name)}
+                        >
+                          {t('Sign in with')} {capitalize(provider.name)}
+                        </Button>
+                      </Form.Item>
+                    ))}
 
                   {/* Thêm nút đăng nhập Microsoft trực tiếp với style gradient của nút Sign in */}
                   <Form.Item<LoginForm> key="microsoft">
