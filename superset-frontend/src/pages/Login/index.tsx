@@ -354,17 +354,18 @@ export default function Login() {
                     </Form.Item>
                   ))}
 
-                  {/* Thêm nút đăng nhập Microsoft trực tiếp */}
+                  {/* Thêm nút đăng nhập Microsoft trực tiếp với style gradient của nút Sign in */}
                   <Form.Item<LoginForm> key="microsoft">
-                    <Button
+                    <StyledSignInButton
                       href={buildProviderLoginUrl('microsoft')}
                       block
+                      type="primary"
                       iconPosition="start"
                       icon={getAuthIconElement('microsoft')}
                       data-test="microsoft-login-button"
                     >
                       {t('Sign in with')} Microsoft
-                    </Button>
+                    </StyledSignInButton>
                   </Form.Item>
                 </Form>
               </Flex>
@@ -443,6 +444,31 @@ export default function Login() {
             )}
 
             */}
+
+            {/* Hiển thị nút đăng nhập Microsoft thay cho form username/password (đóng form) */}
+            {(authType === AuthType.AuthDB || authType === AuthType.AuthLDAP) && (
+              <Flex justify="center" vertical gap="middle">
+                <Typography.Text type="secondary">
+                  {t('Sign in using your Microsoft account:')}
+                </Typography.Text>
+                <Flex
+                  css={css`
+                    width: 100%;
+                  `}
+                >
+                  <StyledSignInButton
+                    block
+                    type="primary"
+                    href={buildProviderLoginUrl('microsoft')}
+                    iconPosition="start"
+                    icon={getAuthIconElement('microsoft')}
+                    data-test="microsoft-login-button-db"
+                  >
+                    {t('Sign in with')} Microsoft
+                  </StyledSignInButton>
+                </Flex>
+              </Flex>
+            )}
           </StyledCard>
         </LeftPanel>
 

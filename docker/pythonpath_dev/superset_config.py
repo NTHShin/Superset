@@ -26,9 +26,11 @@ import sys
  
 from celery.schedules import crontab
 from flask_caching.backends.filesystemcache import FileSystemCache
-# from flask_appbuilder.security.manager import AUTH_OAUTH
+from flask_appbuilder.security.manager import AUTH_OAUTH
 logger = logging.getLogger()
-# AUTH_TYPE = AUTH_OAUTH
+AUTH_TYPE = AUTH_OAUTH
+AUTH_USER_REGISTRATION = True
+AUTH_USER_REGISTRATION_ROLE = "Gamma"
 DATABASE_DIALECT = os.getenv("DATABASE_DIALECT")
 DATABASE_USER = os.getenv("DATABASE_USER")
 DATABASE_PASSWORD = os.getenv("DATABASE_PASSWORD")
@@ -48,6 +50,23 @@ ENABLE_UI_THEME_ADMINISTRATION = True
 BABEL_DEFAULT_LOCALE = 'vi'
 ENABLE_PROXY_FIX = True
 SUPERSET_DASHBOARD_POSITION_DATA_LIMIT = 524288
+
+OAUTH_PROVIDERS = [
+    {
+        "name": "microsoft",
+        "icon": "fa-windows",
+        "remote_app": {
+            "client_id": os.environ.get("MICROSOFT_CLIENT_ID"),
+            "client_secret": os.environ.get("MICROSOFT_CLIENT_SECRET"),
+            "api_base_url": "https://graph.microsoft.com/v1.0/",
+            "authorize_url": "https://login.microsoftonline.com/common/oauth2/v2.0/authorize",
+            "access_token_url": "https://login.microsoftonline.com/common/oauth2/v2.0/token",
+            "request_token_url": None,
+            "access_token_method": "POST",
+            "client_kwargs": {"scope": "openid profile email User.Read"},
+        },
+    }
+]
 
 CORS_OPTIONS = {
     'supports_credentials': True,
