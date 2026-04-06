@@ -353,9 +353,26 @@ export default function Login() {
                       </Button>
                     </Form.Item>
                   ))}
+
+                  {/* Thêm nút đăng nhập Microsoft trực tiếp */}
+                  <Form.Item<LoginForm> key="microsoft">
+                    <Button
+                      href={buildProviderLoginUrl('microsoft')}
+                      block
+                      iconPosition="start"
+                      icon={getAuthIconElement('microsoft')}
+                      data-test="microsoft-login-button"
+                    >
+                      {t('Sign in with')} Microsoft
+                    </Button>
+                  </Form.Item>
                 </Form>
               </Flex>
             )}
+
+            {/*
+              Phần đăng nhập bằng username/password đã được tạm comment theo yêu cầu
+              (không xóa) — nếu cần kích hoạt lại, bỏ comment phần JSX bên dưới.
 
             {(authType === AuthType.AuthDB || authType === AuthType.AuthLDAP) && (
               <Flex justify="center" vertical gap="middle">
@@ -424,6 +441,8 @@ export default function Login() {
                 </Form>
               </Flex>
             )}
+
+            */}
           </StyledCard>
         </LeftPanel>
 
